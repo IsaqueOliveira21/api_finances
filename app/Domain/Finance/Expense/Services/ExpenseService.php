@@ -1,0 +1,58 @@
+<?php
+
+namespace App\Domain\Finance\Expense\Services;
+
+use App\Domain\Finance\Expense\DTOs\IndexExpenseDTO;
+use App\Domain\Finance\Expense\DTOs\StoreExpenseDTO;
+use App\Domain\Finance\Expense\DTOs\UpdateExpenseDTO;
+use App\Domain\Finance\Expense\Models\Expense;
+use App\Domain\Finance\Expense\Repositories\Contracts\ExpenseRepositoryInterface;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
+class ExpenseService {
+
+    public function __construct(
+        private ExpenseRepositoryInterface $expenseRepository,
+    ) {}
+
+    public function index(IndexExpenseDTO $dto): LengthAwarePaginator {
+        $expenses = $this->expenseRepository->index($dto);
+        return $expenses;
+    }
+
+    public function store(StoreExpenseDTO $dto): Expense {
+        return DB::transaction(function() use ($dto) {
+            $expense = $this->expenseRepository->store([
+                'user_id' => Auth::id(),
+                'description' => $dto->description,
+                'type' => $dto->type,
+                'total_amount' => $dto->totalAmount,
+                'category' => $dto->category,
+                'first_due_date' => $dto->firstDueDate,
+                'installment_count' => $dto->installmentCount,
+            ]);
+
+            if($dto->installmentCount > 0) {
+                // Logica de criação de installments aqui
+            }
+
+            return $expense;
+        });
+    }
+
+    public function update(Expense $expense, UpdateExpenseDTO $dto): Expense {
+        $expense = $this->expenseRepository->update($expense, [
+            "description" => $dto->description,
+            "total_amount" => $expense->type !== 'installment' ? $dto->totalAmount : $expense->total_amount,
+            "category" => $dto->category,
+            "first_due_date" => $expense->type !== 'installment' ? $dto->firstDueDate : $expense->first_due_date,
+        ]);
+        return $expense;
+    }
+
+    public function destroy(Expense $expense): void {
+        $this->expenseRepository->destroy($expense);
+    }
+}
