@@ -15,6 +15,7 @@ class ExpenseService {
 
     public function __construct(
         private ExpenseRepositoryInterface $expenseRepository,
+        private ExpenseInstallmentService $expenseInstallmentService,
     ) {}
 
     public function index(IndexExpenseDTO $dto): LengthAwarePaginator {
@@ -34,8 +35,8 @@ class ExpenseService {
                 'installment_count' => $dto->installmentCount,
             ]);
 
-            if($dto->installmentCount > 0) {
-                // Logica de criação de installments aqui
+            if($dto->installmentCount > 0 && $expense->type === "installment") {
+                $this->expenseInstallmentService->store($expense);
             }
 
             return $expense;

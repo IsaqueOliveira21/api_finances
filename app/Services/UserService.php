@@ -33,8 +33,8 @@ class UserService {
         return ['user' => Auth::user(), 'token' => $token];
     }
 
-    public function me(): array {
-        return ['user' => Auth::user(), 'token' => explode('|', Auth::user()->currentAccessToken()->plainTextToken)[1]];
+    public function me(): User {
+        return Auth::user();
     }
 
     public function logout() {
