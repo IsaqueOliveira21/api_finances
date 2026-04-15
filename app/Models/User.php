@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Domain\Finance\Expense\Models\Expense;
+use App\Domain\Finance\Transaction\Models\Transaction;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -36,5 +37,9 @@ class User extends Authenticatable
 
     public function expenses() {
         return $this->hasMany(Expense::class);
+    }
+
+    public function transactions() {
+        return $this->hasMany(Transaction::class);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Domain\Finance\Expense\Models;
 
+use App\Domain\Finance\Transaction\Models\Transaction;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -28,5 +29,9 @@ class Expense extends Model
 
     public function installments() {
         return $this->hasMany(ExpenseInstallment::class);
+    }
+
+    public function transactions() {
+        return $this->hasMany(Transaction::class);
     }
 }
