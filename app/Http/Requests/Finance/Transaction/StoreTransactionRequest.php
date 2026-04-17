@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Finance\Transaction;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -23,7 +23,7 @@ class StoreTransactionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "expense_id" => "required|numeric",
+            "expense_id" => "nullable|numeric",
             "type" => "required|string",
             "amount" => "required|numeric",
             "description" => "required|string",

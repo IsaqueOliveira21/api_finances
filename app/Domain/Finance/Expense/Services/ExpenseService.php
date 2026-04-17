@@ -7,6 +7,7 @@ use App\Domain\Finance\Expense\DTOs\StoreExpenseDTO;
 use App\Domain\Finance\Expense\DTOs\UpdateExpenseDTO;
 use App\Domain\Finance\Expense\Models\Expense;
 use App\Domain\Finance\Expense\Repositories\Contracts\ExpenseRepositoryInterface;
+use App\Domain\Finance\Transaction\Services\TransactionService;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -16,6 +17,7 @@ class ExpenseService {
     public function __construct(
         private ExpenseRepositoryInterface $expenseRepository,
         private ExpenseInstallmentService $expenseInstallmentService,
+        private TransactionService $transactionService,
     ) {}
 
     public function index(IndexExpenseDTO $dto): LengthAwarePaginator {

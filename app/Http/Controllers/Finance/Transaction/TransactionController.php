@@ -7,7 +7,7 @@ use App\Domain\Finance\Transaction\DTOs\StoreTransactionDTO;
 use App\Domain\Finance\Transaction\Services\TransactionService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\IndexTransactionRequest;
-use App\Http\Requests\StoreTransactionRequest;
+use App\Http\Requests\Finance\Transaction\StoreTransactionRequest;
 use App\Http\Resources\Finance\Transaction\TransactionResource;
 use App\Traits\Api\ApiResponse;
 use Exception;
