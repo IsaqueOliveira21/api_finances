@@ -7,6 +7,7 @@ use App\Domain\Finance\Expense\DTOs\StoreExpenseDTO;
 use App\Domain\Finance\Expense\DTOs\UpdateExpenseDTO;
 use App\Domain\Finance\Expense\Models\Expense;
 use App\Domain\Finance\Expense\Repositories\Contracts\ExpenseRepositoryInterface;
+use App\Domain\Finance\Transaction\DTOs\StoreTransactionDTO;
 use App\Domain\Finance\Transaction\Services\TransactionService;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
@@ -37,6 +38,17 @@ class ExpenseService {
                 'installment_count' => $dto->installmentCount,
             ]);
 
+            if ($expense->type !== "installment") {
+                $this->transactionService->store(
+                    StoreTransactionDTO::fromRequest([
+                        "expense_id" => $expense->id,
+                        "type" => "outcome",
+                        "amount" => $expense->total_amount,
+                        "description" => "Gasto: {$expense->description}",
+                    ]),
+                );
+            }
+
             if($dto->installmentCount > 0 && $expense->type === "installment") {
                 $this->expenseInstallmentService->store($expense);
             }
@@ -56,6 +68,8 @@ class ExpenseService {
     }
 
     public function destroy(Expense $expense): void {
-        $this->expenseRepository->destroy($expense);
+        DB::transaction(function() use ($expense) {
+            $this->expenseRepository->destroy($expense);
+        });
     }
 }

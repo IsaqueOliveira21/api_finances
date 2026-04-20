@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Finance\Expense\ExpenseController;
+use App\Http\Controllers\Finance\Expense\ExpenseInstallmentController;
 use App\Http\Controllers\Finance\Transaction\TransactionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -16,6 +17,11 @@ Route::prefix('v1')->group(function () {
 
         Route::prefix('/finances')->group(function() {
             Route::apiResource('expenses', ExpenseController::class);
+
+            Route::prefix('/expenses/{expense}/installments')->controller(ExpenseInstallmentController::class)->group(function() {
+                Route::get("/", "index");
+                Route::put("/pay/{expenseInstallment}", "pay");
+            });
         });
 
         Route::prefix('/transactions')->controller(TransactionController::class)->group(function() {

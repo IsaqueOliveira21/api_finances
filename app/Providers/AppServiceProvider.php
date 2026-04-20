@@ -8,6 +8,9 @@ use App\Domain\Finance\Expense\Repositories\Eloquent\ExpenseInstallmentRepositor
 use App\Domain\Finance\Expense\Repositories\Eloquent\ExpenseRepository;
 use App\Domain\Finance\Transaction\Repositories\Contracts\TransactionRepositoryInterface;
 use App\Domain\Finance\Transaction\Repositories\Eloquent\TransactionRepository;
+use Illuminate\Cache\RateLimiting\Limit;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -27,6 +30,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        RateLimiter::for('api', function(Request $request) {
+            // Limita por ID do usuário autenticado ou por IP para visitantes
+            return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip);
+        });
     }
 }

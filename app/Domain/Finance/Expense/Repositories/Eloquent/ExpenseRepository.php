@@ -56,6 +56,8 @@ class ExpenseRepository implements ExpenseRepositoryInterface{
     }
 
     public function destroy(Expense $expense): void {
+        $expense->installments()->delete();
+        $expense->transactions()->delete();
         $expense->delete();
     }
 }
