@@ -7,11 +7,13 @@ use App\Domain\Finance\Expense\DTOs\StoreExpenseDTO;
 use App\Domain\Finance\Expense\DTOs\UpdateExpenseDTO;
 use App\Domain\Finance\Expense\Models\Expense;
 use App\Domain\Finance\Expense\Services\ExpenseService;
+use App\Exceptions\InvalidExpenseTypeException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Finance\Expense\IndexExpenseRequest;
 use App\Http\Requests\Finance\Expense\StoreExpenseRequest;
 use App\Http\Requests\Finance\Expense\UpdateExpenseRequest;
 use App\Http\Resources\Finance\Expense\ExpenseResource;
+use App\Http\Resources\Finance\Transaction\TransactionResource;
 use App\Traits\Api\ApiResponse;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -72,6 +74,20 @@ class ExpenseController extends Controller
             $this->authorize("delete", $expense);
             $this->expenseService->destroy($expense);
             return response()->json(null, 204);
+        } catch (AuthorizationException $e) {
+            return $this->errorResponse("{$e->getLine()}: {$e->getMessage()}", 403);
+        } catch(Exception $e) {
+            return $this->errorResponse("{$e->getLine()}: {$e->getMessage()}", 500);
+        }
+    }
+
+    public function payRecurringExpense(Expense $expense) {
+        try {
+           $this->authorize("update", $expense);
+           $transaction = $this->expenseService->payRecurringExpense($expense);
+           return $this->successResponse(new TransactionResource($transaction), "Recurring expense paid!", 200);
+        } catch (InvalidExpenseTypeException $e) {
+            return $this->errorResponse($e->getMessage(), 422);
         } catch(Exception $e) {
             return $this->errorResponse("{$e->getLine()}: {$e->getMessage()}", 500);
         }

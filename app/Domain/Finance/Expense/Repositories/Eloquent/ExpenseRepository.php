@@ -6,6 +6,7 @@ use App\Domain\Finance\Expense\DTOs\IndexExpenseDTO;
 use App\Domain\Finance\Expense\DTOs\StoreExpenseDTO;
 use App\Domain\Finance\Expense\Models\Expense;
 use App\Domain\Finance\Expense\Repositories\Contracts\ExpenseRepositoryInterface;
+use App\Domain\Finance\Transaction\Models\Transaction;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 

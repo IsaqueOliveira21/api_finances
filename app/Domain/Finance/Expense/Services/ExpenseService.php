@@ -9,6 +9,8 @@ use App\Domain\Finance\Expense\Models\Expense;
 use App\Domain\Finance\Expense\Repositories\Contracts\ExpenseRepositoryInterface;
 use App\Domain\Finance\Transaction\DTOs\StoreTransactionDTO;
 use App\Domain\Finance\Transaction\Services\TransactionService;
+use App\Exceptions\InvalidExpenseTypeException;
+use Carbon\Carbon;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -71,5 +73,19 @@ class ExpenseService {
         DB::transaction(function() use ($expense) {
             $this->expenseRepository->destroy($expense);
         });
+    }
+
+    public function payRecurringExpense(Expense $expense) {
+        if($expense->type !== 'recurring') throw new InvalidExpenseTypeException();
+        $date = Carbon::now()->format('Y-m-d');
+        $transaction = $this->transactionService->store(
+            StoreTransactionDTO::fromRequest([
+                "expense_id" => $expense->id,
+                "type" => "outcome",
+                "amount" => $expense->total_amount,
+                "description" => "Pagamento recorrente: {$expense->description} ({$date})",
+            ]),
+        );
+        return $transaction;
     }
 }

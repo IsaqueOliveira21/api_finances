@@ -5,6 +5,7 @@ namespace App\Domain\Finance\Expense\Repositories\Contracts;
 use App\Domain\Finance\Expense\DTOs\IndexExpenseDTO;
 use App\Domain\Finance\Expense\DTOs\StoreExpenseDTO;
 use App\Domain\Finance\Expense\Models\Expense;
+use App\Domain\Finance\Transaction\Models\Transaction;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 interface ExpenseRepositoryInterface {

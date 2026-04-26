@@ -17,6 +17,7 @@ Route::prefix('v1')->group(function () {
 
         Route::prefix('/finances')->group(function() {
             Route::apiResource('expenses', ExpenseController::class);
+            Route::post('/expenses/{expense}/recurring/payment', [ExpenseController::class, 'payRecurringExpense']);
 
             Route::prefix('/expenses/{expense}/installments')->controller(ExpenseInstallmentController::class)->group(function() {
                 Route::get("/", "index");
