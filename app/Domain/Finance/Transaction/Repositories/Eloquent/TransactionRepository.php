@@ -49,4 +49,13 @@ class TransactionRepository implements TransactionRepositoryInterface {
         ]);
         return $transaction;
     }
+
+    public function getUserWalletBalance(): float {
+        $user_id = Auth::user()->id;
+        $balance = $this->transactionModel
+            ->where('user_id', $user_id)
+            ->selectRaw("SUM(CASE WHEN type = 'income' THEN amount ELSE -amount END) AS total")
+            ->value('total');
+        return $balance ?? 0;
+    }
 }

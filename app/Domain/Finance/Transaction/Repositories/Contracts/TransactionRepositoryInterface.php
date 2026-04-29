@@ -10,4 +10,5 @@ use Illuminate\Pagination\LengthAwarePaginator;
 interface TransactionRepositoryInterface {
     public function index(IndexTransactionDTO $dto): LengthAwarePaginator;
     public function store(StoreTransactionDTO $dto): Transaction;
+    public function getUserWalletBalance(): float;
 }
