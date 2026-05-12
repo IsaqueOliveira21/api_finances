@@ -4,6 +4,7 @@ namespace App\Domain\Finance\Expense\Models;
 
 use App\Domain\Finance\Transaction\Models\Transaction;
 use App\Models\User;
+use Carbon\Carbon;
 use Database\Factories\ExpenseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,6 +25,16 @@ class Expense extends Model
         'first_due_date',
         'installment_count',
     ];
+
+    public function getRecurringStatus(): String {
+        $currentMonthPayment = $this->transactions
+            ->whereBetween('created_at', [Carbon::now()->startOfMonth(), Carbon::now()->endOfMonth()])
+            ->first();
+        $dueDate = Carbon::parse($this->first_due_date)->day;
+        if($currentMonthPayment) return 'paid';
+        if(Carbon::now()->day < $dueDate) return 'pending';
+        return 'late';
+    }
 
     protected static function newFactory()
     {

@@ -23,6 +23,7 @@ class ExpenseResource extends JsonResource
             'category'=> $this->category,
             'first_due_date'=> $this->first_due_date,
             'installment_count'=> $this->installment_count,
+            'status' => $this->type === 'recurring' ? $this->getRecurringStatus() : null,
         ];
     }
 }

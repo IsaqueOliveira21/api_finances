@@ -17,6 +17,7 @@ class ExpenseRepository implements ExpenseRepositoryInterface{
     ) {}
     public function index(IndexExpenseDTO $dto): LengthAwarePaginator {
         $expenses = $this->expenseModel
+            ->with('transactions')
             ->where('user_id', auth()->user()->id)
             ->when($dto->type, function ($query) use ($dto) {
                 $query->where('type', $dto->type);
