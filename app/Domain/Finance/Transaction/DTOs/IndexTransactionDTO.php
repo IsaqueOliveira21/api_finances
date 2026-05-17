@@ -13,11 +13,11 @@ class IndexTransactionDTO {
 
     public static function fromRequest(array $data): self {
         return new self(
-            type: $data["type"],
-            min_amount: $data["min_amount"],
-            max_amount: $data["max_amount"],
-            start_date: $data["start_date"],
-            end_date: $data["end_date"],
+            type: $data["type"] ?? null,
+            min_amount: $data["min_amount"] ?? null,
+            max_amount: $data["max_amount"] ?? null,
+            start_date: $data["start_date"] ?? null,
+            end_date: $data["end_date"] ?? null,
         );
     }
 }
